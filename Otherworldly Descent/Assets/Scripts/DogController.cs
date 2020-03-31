@@ -15,10 +15,17 @@ public class DogController : MonoBehaviour
     public AudioSource playerFoundSource;
     public static DogController instance;
     public Transform fallenItem;
-    public Transform playerPosition;
-    public Image content;
 
+    public Image content;
+    */
+    public Transform[] runAwayPoints;
+    private int currentControlPointIndex = 0;
+    public Transform playerPosition;
     private NavMeshAgent agent;
+    private float runAwayTime;
+   // public Text testText;
+   // public Text testText2;
+    /*
     private Vector3 lastPlayerPosition;
 
     public int sniffDelay;
@@ -37,7 +44,7 @@ public class DogController : MonoBehaviour
     private bool hit;
 
     public bool goToOffice;
-
+    */
 
 
 
@@ -50,7 +57,7 @@ public class DogController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        /*
 
         sniffMeter = Mathf.Clamp(sniffMeter, 0, 100);
         sniffMeterSource = GameObject.Find("Sniff meter source").GetComponent<AudioSource>();
@@ -58,21 +65,23 @@ public class DogController : MonoBehaviour
         sniffMeterSource.Play();
 
         instance = this;
-
+        */
         agent = GetComponent<NavMeshAgent>();
-
+        agent.destination = playerPosition.position;
+        /*
         startWaitTime = Time.time;
 
-
+        */
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    
 
 
-
+        /*
         if (sniffMeter <= 40)
         {
             sniffMeterSource.pitch = 0.4f;
@@ -103,10 +112,10 @@ public class DogController : MonoBehaviour
         }
 
         SniffMeterUI();
-
+        */
     }
 
-
+    /*
     //Moves towards the player
     public void MoveTowardsPlayer()
     {
@@ -301,4 +310,43 @@ public class DogController : MonoBehaviour
     {
         content.fillAmount = (sniffMeter * 0.01f);
     }*/
+
+    void RunAway()
+    {
+        agent.destination = runAwayPoints[currentControlPointIndex].position;
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            if (runAwayPoints.Length > 0)
+            {
+                agent.destination = runAwayPoints[currentControlPointIndex].position;
+
+                currentControlPointIndex++;
+                currentControlPointIndex %= runAwayPoints.Length;
+            }
+        }
+    }
+
+    private IEnumerator RunAwayTime()
+    {
+
+
+
+        yield return new WaitForSecondsRealtime(runAwayTime);
+        GetComponent<NavMeshAgent>().speed = 3.5f;
+        agent.destination = playerPosition.position;
+
+    }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "FlashArea")
+        {
+            float distance = Vector3.Distance(playerPosition.position, transform.position) + 1;
+            GetComponent<NavMeshAgent>().speed = 6;
+            runAwayTime = 1/distance * 50;
+            RunAway();
+            StartCoroutine(RunAwayTime());
+        }
+    }
 }

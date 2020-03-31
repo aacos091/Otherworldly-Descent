@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour
     public Sprite emptyHeart;
 
     private Rigidbody rb;
-
+    public Text testText;
 
     //Player progress stuff
     private Vector3 previousPlayerPosition;
@@ -36,6 +36,10 @@ public class PlayerMove : MonoBehaviour
 
     private bool playerMovement2;
 
+
+    //Camera flash stuff
+    public float cameraFlashTime;
+    private bool canFlash = true;
 
 
 
@@ -52,6 +56,14 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ((Input.GetMouseButtonDown(0)) && canFlash)
+        {
+            //You can put the code for the image here
+            StartCoroutine(CameraFlash());
+            canFlash = false;
+        }
+
+
 
         for (int i = 0; i < hearts.Length; i++)
         {
@@ -168,9 +180,17 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private IEnumerator CameraFlash()
     {
 
+
+        transform.GetChild(2).gameObject.SetActive(true);
+        transform.GetChild(3).gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(cameraFlashTime);
+        transform.GetChild(2).gameObject.SetActive(false);
+        transform.GetChild(3).gameObject.SetActive(false);
+        yield return new WaitForSecondsRealtime(10);
+        canFlash = true;
     }
 }
 

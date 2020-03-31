@@ -49,4 +49,24 @@ public class GameController : MonoBehaviour
         GameObject playerMove = GameObject.Find("Player");
         Destroy(playerMove.GetComponent<PlayerMove>());
     }*/
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Enemy")
+        {
+            transform.GetChild(0).gameObject.SetActive(false);
+
+        }
+    }
+
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Enemy")
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+
+        }
+    }
+
 }
