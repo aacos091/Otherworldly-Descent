@@ -39,6 +39,7 @@ public class PlayerMove : MonoBehaviour
 
     //Camera flash stuff
     public float cameraFlashTime;
+    public float flashDelay;
     private bool canFlash = true;
 
 
@@ -189,7 +190,7 @@ public class PlayerMove : MonoBehaviour
         yield return new WaitForSecondsRealtime(cameraFlashTime);
         transform.GetChild(2).gameObject.SetActive(false);
         transform.GetChild(3).gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(10);
+        yield return new WaitForSecondsRealtime(flashDelay);
         canFlash = true;
     }
 }
