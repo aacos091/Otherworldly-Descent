@@ -41,6 +41,7 @@ public class PlayerMove : MonoBehaviour
     public float cameraFlashTime;
     public float flashDelay;
     private bool canFlash = true;
+    public Light cameraLightSource;
 
 
 
@@ -90,25 +91,6 @@ public class PlayerMove : MonoBehaviour
 
 
         PlayerMovement();
-
-
-
-           /* if (Time.time > keneticWaitTime + keneticDelay)
-            {
-            progression2 = Vector3.Distance(previousPlayerPosition, this.transform.position);
-            previousPlayerPosition = this.transform.position;
-
-            if (progression2 > 4)
-            {
-                playerMovement2 = true;
-            }
-            else
-            {
-                playerMovement2 = false;
-            }
-            keneticWaitTime = Time.time;
-
-            }*/
 
     }
 
@@ -183,13 +165,22 @@ public class PlayerMove : MonoBehaviour
 
     private IEnumerator CameraFlash()
     {
-
-
         transform.GetChild(2).gameObject.SetActive(true);
-        transform.GetChild(3).gameObject.SetActive(true);
+        for (float i = 0; i <= 5; i += (Time.deltaTime * 50))
+        {
+            // set color with i as alpha
+            cameraLightSource.intensity = i;
+            yield return null;
+        }
+
         yield return new WaitForSecondsRealtime(cameraFlashTime);
         transform.GetChild(2).gameObject.SetActive(false);
-        transform.GetChild(3).gameObject.SetActive(false);
+        for (float i = 5; i >= 0; i -= (Time.deltaTime * 100))
+        {
+            // set color with i as alpha
+            cameraLightSource.intensity = i;
+            yield return null;
+        }
         yield return new WaitForSecondsRealtime(flashDelay);
         canFlash = true;
     }

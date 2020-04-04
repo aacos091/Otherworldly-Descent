@@ -22,13 +22,15 @@ public class LightMonster : MonoBehaviour
     {
         location = GetComponent<Transform>();
         StartCoroutine(LightController());
+        lightSource.intensity = lowLIntensity;
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(lightSource.intensity);
         transform.LookAt(player.transform.position);
-        if (lightSource.range == highLRange && lightSource.intensity == highLIntensity)
+        if (lightSource.range == highLRange && lightSource.intensity >= (highLIntensity - 0.1f))
         {
             Vector3 playerPosition = new Vector3(player.transform.position.x, lightMonster.transform.position.y, player.transform.position.z);
             lightMonster.transform.LookAt(playerPosition);
@@ -46,19 +48,40 @@ public class LightMonster : MonoBehaviour
 
     private IEnumerator LightController()
     {
-        float i;
+        float lightPeriod;
 
         while (gameState)
         {
-            lightSource.range = lowLRange;
-            lightSource.intensity = lowLIntensity;
-            i = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(i);
+
+
+
+
+            //sets a random amount of time the light will stay in this intensity
+            lightPeriod = Random.Range(lowTime, highTime);
+            yield return new WaitForSecondsRealtime(10);
+
 
             lightSource.range = highLRange;
-            lightSource.intensity = highLIntensity;
-            i = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(i);
+            //Increases intenisty over time. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
+            for (float i = lowLIntensity; i < highLIntensity; i += (Time.deltaTime))
+            {
+
+                lightSource.intensity = i;
+                yield return null;
+            }
+
+            //sets a random amount of time the light will stay in this intensity
+            lightPeriod = Random.Range(lowTime, highTime);
+            yield return new WaitForSecondsRealtime(10);
+
+                        lightSource.range = lowLRange;
+            //Decreases intensity overtime. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
+            for (float i = highLIntensity; i >= lowLIntensity; i -= (Time.deltaTime))
+            {
+                
+                lightSource.intensity = i;
+                yield return null;
+            }
         }
     }
 
