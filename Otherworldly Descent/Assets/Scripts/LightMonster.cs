@@ -58,7 +58,7 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(10);
+            yield return new WaitForSecondsRealtime(lightPeriod);
 
 
             lightSource.range = highLRange;
@@ -72,7 +72,7 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(10);
+            yield return new WaitForSecondsRealtime(lightPeriod);
 
                         lightSource.range = lowLRange;
             //Decreases intensity overtime. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
