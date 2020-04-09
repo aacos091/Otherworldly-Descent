@@ -12,6 +12,8 @@ public class LightMonster : MonoBehaviour
     private Transform location;
     RaycastHit hit;
     bool damaged = true;
+    private DarkMonsterController darkMonsterController;
+
 
     //variables used to change settings of game in editor
     public float lowTime, highTime, waitAfterDamage, lowLRange, highLRange, lowLIntensity, highLIntensity;
@@ -32,6 +34,7 @@ public class LightMonster : MonoBehaviour
         transform.LookAt(player.transform.position);
         if (lightSource.range == highLRange && lightSource.intensity >= (highLIntensity - 0.1f))
         {
+
             Vector3 playerPosition = new Vector3(player.transform.position.x, lightMonster.transform.position.y, player.transform.position.z);
             lightMonster.transform.LookAt(playerPosition);
 
@@ -58,9 +61,10 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(lightPeriod);
+            yield return new WaitForSecondsRealtime(5);
 
-
+            playerScript.checkMonsterLOS = true;
+            darkMonsterController.RunAwayFunction();
             lightSource.range = highLRange;
             //Increases intenisty over time. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
             for (float i = lowLIntensity; i < highLIntensity; i += (Time.deltaTime))
@@ -72,7 +76,7 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(lightPeriod);
+            yield return new WaitForSecondsRealtime(100);
 
                         lightSource.range = lowLRange;
             //Decreases intensity overtime. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.

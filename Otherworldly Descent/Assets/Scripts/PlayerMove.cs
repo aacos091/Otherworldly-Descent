@@ -43,6 +43,11 @@ public class PlayerMove : MonoBehaviour
     private bool canFlash = true;
     public Light cameraLightSource;
 
+    //Monster lin of sight stuff for despawning
+    public bool canSeeMonster;
+    public bool checkMonsterLOS;
+    private Transform location;
+
 
 
 
@@ -51,7 +56,7 @@ public class PlayerMove : MonoBehaviour
      
         charController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
-
+        location = GetComponent<Transform>();
 
     }
 
@@ -89,6 +94,17 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
+        if(checkMonsterLOS)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(location.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+            {
+                if (hit.collider.gameObject.tag == "Enemy")
+                {
+                    canSeeMonster = true;
+                }
+            }
+        }
 
         PlayerMovement();
 
@@ -147,11 +163,7 @@ public class PlayerMove : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-       if (other.tag == "Enemy")
-        {
-            health --;
 
-        }
         if (other.tag == "healthUp")
         {
             health++;

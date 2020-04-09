@@ -8,6 +8,9 @@ TagManager:
   - Ground
   - healthUp
   - FlashArea
+  - PlayerRange
+  - LargePlayerRange
+  - PlayerHitbox
   layers:
   - Default
   - TransparentFX
