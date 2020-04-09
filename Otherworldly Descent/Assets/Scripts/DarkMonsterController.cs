@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class DarkMonsterController : MonoBehaviour
 {
-
+    //
     public Transform[] runAwayPoints;
     private int currentControlPointIndex = 0;
 
