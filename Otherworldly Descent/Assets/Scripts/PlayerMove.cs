@@ -42,6 +42,7 @@ public class PlayerMove : MonoBehaviour
     public float flashDelay;
     private bool canFlash = true;
     public Light cameraLightSource;
+    public AudioSource flashSound;
 
     //Monster lin of sight stuff for despawning
     public bool canSeeMonster;
@@ -57,6 +58,7 @@ public class PlayerMove : MonoBehaviour
         charController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
         location = GetComponent<Transform>();
+        flashSound = GetComponent<AudioSource>();
 
     }
 
@@ -67,6 +69,7 @@ public class PlayerMove : MonoBehaviour
         {
             //You can put the code for the image here
             StartCoroutine(CameraFlash());
+            flashSound.Play();
             canFlash = false;
         }
 
