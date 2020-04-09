@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    
     //Spawn point stuff
     public Transform[] spawnPoints;
 
@@ -92,7 +93,7 @@ public class GameController : MonoBehaviour
             FindSpawnPoint();
             startSpawn = false;
             yield return new WaitForSeconds(1);
-            darkMonsterController.behavior = darkMonsterController.FollowAtDistance;
+            darkMonsterController.behavior = darkMonsterController.AttackPlayer;
             darkMonsterController.checkLargeRange = true;
         }
 
@@ -112,13 +113,13 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(1);
 
 
-            if (behaviorChance < 10)
+            if (behaviorChance < 1)
             {
                 darkMonsterController.behavior = darkMonsterController.FollowAtDistance;
                 darkMonsterController.checkLargeRange = true;
                 behaviorChanceAddition += 10;
             }
-            else if (behaviorChance < 20)
+            else if (behaviorChance < 2)
             {
                 darkMonsterController.behavior = darkMonsterController.FollowThenAttack;
                 darkMonsterController.checkLargeRange = true;
