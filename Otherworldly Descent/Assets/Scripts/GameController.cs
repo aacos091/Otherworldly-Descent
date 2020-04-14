@@ -6,7 +6,11 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    
+
+
+
+
+
     //Spawn point stuff
     public Transform[] spawnPoints;
 
@@ -42,7 +46,7 @@ public class GameController : MonoBehaviour
     {
        
         startSpawn = true;
-        StartCoroutine(StartSpawn());
+        //StartCoroutine(StartSpawn());
     }
 
     // Update is called once per frame
@@ -59,9 +63,9 @@ public class GameController : MonoBehaviour
 
         if(canSpawn)
         {
-            StartCoroutine(Spawn());
+            //StartCoroutine(Spawn());
         }
-        
+
     }
 
 

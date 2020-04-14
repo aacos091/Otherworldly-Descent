@@ -20,6 +20,7 @@ public class DarkMonsterController : MonoBehaviour
     public PlayerMove playerScript;
     public Transform playerPosition;
     public GameObject playerBlock;
+    public ScoreController scoreController;
 
     //Behavior stuff
     public bool checkLargeRange;
@@ -157,6 +158,7 @@ public class DarkMonsterController : MonoBehaviour
         {
             RunAwayFunction();
             playerScript.health--;
+            scoreController.totalHealth--;
             despawn = true;
             darkMonsterBehaviorSwitch = 4;
             

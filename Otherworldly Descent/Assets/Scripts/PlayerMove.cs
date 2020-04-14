@@ -27,7 +27,6 @@ public class PlayerMove : MonoBehaviour
     public Sprite emptyHeart;
 
     private Rigidbody rb;
-    public Text testText;
 
     //Player progress stuff
     private Vector3 previousPlayerPosition;
