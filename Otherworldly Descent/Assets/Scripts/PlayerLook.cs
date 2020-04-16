@@ -18,8 +18,9 @@ public class PlayerLook : MonoBehaviour
         xAxisClamp = 0.0f;
     }
 
-    private void LockCursor() 
+    public void LockCursor() 
     {
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
     

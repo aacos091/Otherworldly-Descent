@@ -20,7 +20,7 @@ public class PlayerMove : MonoBehaviour
     private bool isJumping;
 
     //Player health stuff
-    public int health = 5;
+    public int health;
     public int numberOfHearts;
     public Image[] hearts;
     public Sprite fullHeart;
@@ -39,17 +39,19 @@ public class PlayerMove : MonoBehaviour
     //Camera flash stuff
     public float cameraFlashTime;
     public float flashDelay;
-    private bool canFlash = true;
+    public bool canFlash = true;
     public Light cameraLightSource;
     public AudioSource flashSound;
+    public float flashDelayMultiplyer;
 
     //Monster lin of sight stuff for despawning
     public bool canSeeMonster;
     public bool checkMonsterLOS;
     private Transform location;
 
-
-
+    //Health regen
+    public float healthRegenDelay;
+    public bool healthRegen;
 
     private void Awake()
     {
@@ -64,6 +66,9 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
+
         if ((Input.GetMouseButtonDown(0)) && canFlash)
         {
             //You can put the code for the image here
@@ -111,6 +116,21 @@ public class PlayerMove : MonoBehaviour
         PlayerMovement();
 
     }
+
+
+    public IEnumerator regenerateHealth()
+    {
+        yield return new WaitForSeconds(healthRegenDelay);
+        if(health < numberOfHearts - 1)
+        {
+            health++;
+        }
+    }
+        
+
+
+
+
 
     private void PlayerMovement()
     {
@@ -187,7 +207,7 @@ public class PlayerMove : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSecondsRealtime(cameraFlashTime);
+        yield return new WaitForSeconds(cameraFlashTime);
         transform.GetChild(2).gameObject.SetActive(false);
         for (float i = 5; i >= 0; i -= (Time.deltaTime * 100))
         {
@@ -195,7 +215,7 @@ public class PlayerMove : MonoBehaviour
             cameraLightSource.intensity = i;
             yield return null;
         }
-        yield return new WaitForSecondsRealtime(flashDelay);
+        yield return new WaitForSeconds(flashDelay * flashDelayMultiplyer);
         canFlash = true;
     }
 }

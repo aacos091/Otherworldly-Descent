@@ -8,7 +8,8 @@ public class GameController : MonoBehaviour
 {
 
 
-
+    //Victory stuff
+    public bool playerMustExit;
 
 
     //Spawn point stuff
@@ -21,7 +22,7 @@ public class GameController : MonoBehaviour
     DarkMonsterController darkMonsterController;
 
 
-
+    public bool canPause = true;
     private bool playerLost;
 
     //Spawn stuff
@@ -52,8 +53,13 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("escape"))
-           Application.Quit();
+
+        if (Input.GetKeyDown("escape") && canPause)
+        {
+
+                Application.Quit();
+            
+        }
 
         
         if (playerLost)
@@ -91,7 +97,7 @@ public class GameController : MonoBehaviour
 
     public IEnumerator StartSpawn()
     {
-        while(startSpawn)
+        if(startSpawn)
         {
             yield return new WaitForSeconds(monsterSpawnTimeStart);
             FindSpawnPoint();

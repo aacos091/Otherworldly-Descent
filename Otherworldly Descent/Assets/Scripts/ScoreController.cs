@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ScoreController : MonoBehaviour
 {
@@ -12,26 +13,26 @@ public class ScoreController : MonoBehaviour
     public int randomMaxInt;
 
     //Total health scoring
-    public Text totalHealthText;
-    public Text healthScoreText;
+    public TextMeshProUGUI totalHealthText;
+    public TextMeshProUGUI healthScoreText;
     public int totalHealth;
     private int healthScore;
 
     //Orb scoring
-    public Text orbsCollectedText;
-    public Text orbScoreText;
+    public TextMeshProUGUI orbsCollectedText;
+    public TextMeshProUGUI orbScoreText;
     public int orbsCollected;
     private int orbScore;
 
     //Rune scoring
-    public Text runesCollectedText;
-    public Text runeScoreText;
+    public TextMeshProUGUI runesCollectedText;
+    public TextMeshProUGUI runeScoreText;
     public int runesCollected;
     private int runeScore;
 
     //Total score
-    public Text scoreTallyText;
-    public Text totalScoreText;
+    public TextMeshProUGUI scoreTallyText;
+    public TextMeshProUGUI totalScoreText;
     public int totalScore;
 
 
@@ -67,11 +68,11 @@ public class ScoreController : MonoBehaviour
         {
             for (int i = 0; i <= orbsCollected; i += (1))
             {
-                orbsCollectedText.text = "Score: " + i.ToString();
+                orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: </font>" + i.ToString();
                 yield return null;
             }
 
-            orbsCollectedText.text = "Orbs Collected: " + orbsCollected.ToString();
+            orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
 
             yield return new WaitForSeconds(0.5f);
             orbScore = orbsCollected * 50;
@@ -83,17 +84,17 @@ public class ScoreController : MonoBehaviour
             for (int i = 0; i <= orbScore; i += Random.Range(randomMinInt, randomMaxInt))
             {
 
-                orbScoreText.text = "Score: " + i.ToString();
+                orbScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
                 yield return null;
             }
 
-            orbScoreText.text = "Score: " + orbScore.ToString();
+            orbScoreText.text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
         }
         else
         {
-            orbsCollectedText.text = "Orbs Collected: " + orbsCollected.ToString();
+            orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
             yield return new WaitForSeconds(0.5f);
-            orbScoreText.text = "Score: " + orbScore.ToString();
+            orbScoreText.text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -101,11 +102,11 @@ public class ScoreController : MonoBehaviour
 
         for (int i = 0; i <= totalHealth; i += (1))
         {
-            totalHealthText.text = "Score: " + i.ToString();
+            totalHealthText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
             yield return null;
         }
 
-        totalHealthText.text = "Health Remaining: " + totalHealth.ToString();
+        totalHealthText.text = "<font=\"LiberationSans SDF\">Health Remaining: " + totalHealth.ToString() + "</font>";
 
         yield return new WaitForSeconds(0.5f);
         healthScore = totalHealth * 100;
@@ -117,11 +118,11 @@ public class ScoreController : MonoBehaviour
         for (int i = 0; i <= healthScore; i += Random.Range(randomMinInt, randomMaxInt))
         {
 
-            healthScoreText.text = "Score: " + i.ToString();
+            healthScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
             yield return null;
         }
 
-        healthScoreText.text = "Score: " + healthScore.ToString();
+        healthScoreText.text = "<font=\"LiberationSans SDF\">Score: " + healthScore.ToString() + "</font>";
 
         yield return new WaitForSeconds(0.5f);
 
@@ -129,11 +130,11 @@ public class ScoreController : MonoBehaviour
         {
             for (int i = 0; i <= runesCollected; i += (1))
             {
-                runesCollectedText.text = "Score: " + i.ToString();
+                runesCollectedText.text = "<font=\"LiberationSans SDF\">Score: </font> " + i.ToString() + "</font>";
                 yield return null;
             }
 
-            runesCollectedText.text = "Runes Collected: " + runesCollected.ToString();
+            runesCollectedText.text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
 
             yield return new WaitForSeconds(0.5f);
             runeScore = orbsCollected * 50;
@@ -145,16 +146,16 @@ public class ScoreController : MonoBehaviour
             for (int i = 0; i <= runeScore; i += Random.Range(randomMinInt, randomMaxInt))
             {
 
-                runeScoreText.text = "Score: " + i.ToString();
+                runeScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
                 yield return null;
             }
-            runeScoreText.text = "Score: " + runeScore.ToString();
+            runeScoreText.text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
         }
         else
         {
-            runesCollectedText.text = "Runes Collected: " + runesCollected.ToString();
+            runesCollectedText.text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
             yield return new WaitForSeconds(0.5f);
-            runeScoreText.text = "Score: " + runeScore.ToString();
+            runeScoreText.text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
         }
 
 
@@ -173,9 +174,9 @@ public class ScoreController : MonoBehaviour
         for (int i = 0; i <= totalScore; i += Random.Range(randomMinInt, randomMaxInt))
         {
 
-            totalScoreText.text = "Total Score:\n" + i.ToString();
+            totalScoreText.text = "<font=\"LiberationSans SDF\">Total Score:\n </font>" + i.ToString();
             yield return null;
         }
-        totalScoreText.text = "Total Score:\n" + totalScore.ToString();
+        totalScoreText.text = "<font=\"LiberationSans SDF\">Total Score:\n" + totalScore.ToString() + "</font>";
     }
 }

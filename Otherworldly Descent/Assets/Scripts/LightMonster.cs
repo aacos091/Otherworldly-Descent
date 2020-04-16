@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class LightMonster : MonoBehaviour
 {
+    //Difficulty stuff
+    public bool doubleDamage;
+    public float phaseMultiplyer;
+
+
+    public float lightPeriod;
+
+    
     public GameObject player;
     public GameObject lightMonster;
     public PlayerMove playerScript;
@@ -30,7 +38,7 @@ public class LightMonster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(lightSource.intensity);
+        //Debug.Log(lightSource.intensity);
         transform.LookAt(player.transform.position);
         if (lightSource.range == highLRange && lightSource.intensity >= (highLIntensity - 0.1f))
         {
@@ -51,7 +59,7 @@ public class LightMonster : MonoBehaviour
 
     private IEnumerator LightController()
     {
-        float lightPeriod;
+        
 
         while (gameState)
         {
@@ -60,11 +68,11 @@ public class LightMonster : MonoBehaviour
 
 
             //sets a random amount of time the light will stay in this intensity
-            lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(5);
+            lightPeriod = (Random.Range(lowTime, highTime) * phaseMultiplyer);
+            yield return new WaitForSecondsRealtime(lightPeriod);
 
             playerScript.checkMonsterLOS = true;
-            darkMonsterController.RunAwayFunction();
+            //darkMonsterController.RunAwayFunction();
             lightSource.range = highLRange;
             //Increases intenisty over time. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
             for (float i = lowLIntensity; i < highLIntensity; i += (Time.deltaTime))
@@ -76,7 +84,7 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(100);
+            yield return new WaitForSecondsRealtime(lightPeriod);
 
                         lightSource.range = lowLRange;
             //Decreases intensity overtime. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
@@ -93,7 +101,14 @@ public class LightMonster : MonoBehaviour
     {
         if (damaged)
         {
-            playerScript.health--;
+            if (doubleDamage)
+            {
+                playerScript.health = -2;
+            }
+            else
+            {
+                playerScript.health-- ;
+            }
             damaged = false;
             yield return new WaitForSecondsRealtime(waitAfterDamage);
             damaged = true;

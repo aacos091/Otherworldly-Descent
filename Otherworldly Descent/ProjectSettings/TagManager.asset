@@ -11,6 +11,7 @@ TagManager:
   - PlayerRange
   - LargePlayerRange
   - PlayerHitbox
+  - Rune
   layers:
   - Default
   - TransparentFX

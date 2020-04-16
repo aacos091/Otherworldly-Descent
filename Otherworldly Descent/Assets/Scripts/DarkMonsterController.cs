@@ -10,11 +10,13 @@ public class DarkMonsterController : MonoBehaviour
     public Transform[] runAwayPoints;
     private int currentControlPointIndex = 0;
 
-    //Stuff for picking behavior
-    /*public int behaviorChance;
-    public int behaviorChanceMax;
-    public int behaviorChanceMin;
-    public int behaviorChanceAddition;*/
+
+
+
+    //Difficulty stuff
+    public bool doubleDamage;
+    public float speed;
+    public float flashMultiplyer = 1;
 
     //Player information
     public PlayerMove playerScript;
@@ -25,6 +27,7 @@ public class DarkMonsterController : MonoBehaviour
     //Behavior stuff
     public bool checkLargeRange;
     public bool playerAttacked;
+    private bool canAttack = true;
     private bool attackOnce;
     public bool runAway;
     public bool alsoAttack;
@@ -52,38 +55,41 @@ public class DarkMonsterController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         agent = GetComponent<NavMeshAgent>();
         agent.destination = playerPosition.position;
         darkMonsterBehaviorSwitch = 1;
+        agent.speed = speed;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         switch (darkMonsterBehaviorSwitch)
         {
             //Looks for the player
             case 1:
-                print("Finding player");
+                //print("Finding player");
                 agent.destination = playerPosition.position;
                 break;
 
                 //Once in range it will attack the player based on the set behavior
             case 2:
-                print("Attacking player");
+                //print("Attacking player");
                 agent.destination = playerPosition.position;
                 behavior();
                 break;
 
                 //If 
             case 3:
-                print("Following player");
+                //print("Following player");
                 agent.destination = playerPosition.position;
                 behavior();
                 break;
 
             case 4:
-                print("Running Away!");
+               // print("Running Away!");
                 RunAwayFunction();
                 break;
         }
@@ -156,9 +162,20 @@ public class DarkMonsterController : MonoBehaviour
 
         if (playerAttacked)
         {
+            if(doubleDamage)
+            {
+                playerScript.health -= 2;
+                playerAttacked = false;
+                //scoreController.totalHealth =- 2;
+            }
+            else
+            {
+                playerScript.health-- ;
+                //scoreController.totalHealth-- ;
+            }
+            playerAttacked = false;
             RunAwayFunction();
-            playerScript.health--;
-            scoreController.totalHealth--;
+
             despawn = true;
             darkMonsterBehaviorSwitch = 4;
             
@@ -194,8 +211,8 @@ public class DarkMonsterController : MonoBehaviour
     private IEnumerator RunAwayTime()
     {
 
-        yield return new WaitForSecondsRealtime(runAwayTime);
-        agent.speed = 6f;
+        yield return new WaitForSecondsRealtime(runAwayTime * flashMultiplyer);
+        agent.speed = speed;
         darkMonsterBehaviorSwitch = 1;
         playerBlock.SetActive(false);
         runAway = false;
@@ -229,7 +246,11 @@ public class DarkMonsterController : MonoBehaviour
 
         if(other.tag == "PlayerHitbox")
         {
-            playerAttacked = true;
+            if (canAttack)
+            {
+                playerAttacked = true;
+                canAttack = false;
+            }
         }
     }
 
