@@ -8,7 +8,7 @@ public class DarkMonsterController : MonoBehaviour
 {
     //
     public Transform[] runAwayPoints;
-    private int currentControlPointIndex = 0;
+
 
 
 
@@ -21,7 +21,6 @@ public class DarkMonsterController : MonoBehaviour
     //Player information
     public PlayerMove playerScript;
     public Transform playerPosition;
-    public GameObject playerBlock;
     public ScoreController scoreController;
 
     //Behavior stuff
@@ -47,9 +46,15 @@ public class DarkMonsterController : MonoBehaviour
     private Transform farthestPoint;
 
     //Despawning stuff
+    private int flashAmount;
+    public int flashLimit;
     public bool despawn;
     private float playerDistance;
     public GameController gameController;
+    public GameObject particles;
+    private GameObject spawnedParticles;
+    public GameObject particleSpawnPoint;
+    public GameObject model;
 
 
     // Start is called before the first frame update
@@ -65,7 +70,7 @@ public class DarkMonsterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         switch (darkMonsterBehaviorSwitch)
         {
             //Looks for the player
@@ -74,35 +79,28 @@ public class DarkMonsterController : MonoBehaviour
                 agent.destination = playerPosition.position;
                 break;
 
-                //Once in range it will attack the player based on the set behavior
+            //Once in range it will attack the player based on the set behavior
             case 2:
                 //print("Attacking player");
                 agent.destination = playerPosition.position;
                 behavior();
                 break;
 
-                //If 
-            case 3:
-                //print("Following player");
-                agent.destination = playerPosition.position;
-                behavior();
-                break;
 
-            case 4:
-               // print("Running Away!");
+            case 3:
+                // print("Running Away!");
                 RunAwayFunction();
                 break;
         }
         if (despawn)
         {
-            playerScript.checkMonsterLOS = true;
-            if (playerScript.canSeeMonster == false)
-            {
-                gameController.canSpawn = true;
-                playerScript.checkMonsterLOS = false;
-                Destroy(gameObject);
 
-            }
+            gameController.canSpawnDM = true;
+            GameObject newObj = Instantiate(particles, particleSpawnPoint.transform.position, Quaternion.identity) as GameObject;
+            Destroy(gameObject);
+
+
+
         }
     }
 
@@ -111,20 +109,9 @@ public class DarkMonsterController : MonoBehaviour
         StartCoroutine(AttackingPlayer());
     }
 
-    public void FollowAtDistance()
-    {
 
-        StartCoroutine(FollowAtDistanceTime());
-        agent.stoppingDistance = 20;
-    }
 
-    public void FollowThenAttack()
-    {
-        StartCoroutine(FollowAtDistanceTime());
-        alsoAttack = true;
 
-        print("Following then attacking");
-    }
 
     public void AttackTwice()
     {
@@ -173,11 +160,12 @@ public class DarkMonsterController : MonoBehaviour
                 playerScript.health-- ;
                 //scoreController.totalHealth-- ;
             }
+
             playerAttacked = false;
             RunAwayFunction();
 
             despawn = true;
-            darkMonsterBehaviorSwitch = 4;
+            darkMonsterBehaviorSwitch = 3;
             
         }
 
@@ -189,33 +177,20 @@ public class DarkMonsterController : MonoBehaviour
     }
 
 
-    private IEnumerator FollowAtDistanceTime()
-    {
-        print("Follow time");
-        //Sppoky stuff goes here!
-        yield return new WaitForSecondsRealtime(7);
-        if(alsoAttack)
-        {
-            behavior = AttackPlayer;
-            checkLargeRange = false;
-            darkMonsterBehaviorSwitch = 1;
-        }
-        else
-        {
-            despawn = true;
-            RunAwayFunction();
-        }
-    }
-
 
     private IEnumerator RunAwayTime()
     {
-
-        yield return new WaitForSecondsRealtime(runAwayTime * flashMultiplyer);
+        
+        yield return new WaitForSeconds(0.1f);
+        model.SetActive(false);
+        agent.speed = 9;
+        yield return new WaitForSeconds(runAwayTime * flashMultiplyer);
+        Destroy(spawnedParticles);
+        model.SetActive(true);
         agent.speed = speed;
         darkMonsterBehaviorSwitch = 1;
-        playerBlock.SetActive(false);
         runAway = false;
+        canAttack = true;
     }
 
 
@@ -223,25 +198,27 @@ public class DarkMonsterController : MonoBehaviour
     {
         if (other.tag == "FlashArea")
         {
-            darkMonsterBehaviorSwitch = 4;
+            flashAmount++;
+            if(flashAmount >= flashLimit)
+            {
+                despawn = true;
+            }
+            canAttack = false;
+            darkMonsterBehaviorSwitch = 3;
             float distance = Vector3.Distance(playerPosition.position, transform.position) + 1;
-            agent.speed = 9;
+            agent.speed = 0;
             runAwayTime = 1 / distance * 50;
-            playerBlock.SetActive(true);
+            spawnedParticles = Instantiate(particles, particleSpawnPoint.transform.position, Quaternion.identity) as GameObject;
+            
             StartCoroutine(RunAwayTime());
         }
 
-        if (other.tag == "LargePlayerRange")
-        {
-            if (checkLargeRange == true)
-            {
-                darkMonsterBehaviorSwitch = 3;
-            }
-        }
+
 
         if (other.tag == "PlayerRange")
         {
-            darkMonsterBehaviorSwitch = 2;
+            if(darkMonsterBehaviorSwitch == 1)
+                darkMonsterBehaviorSwitch = 2;
         }
 
         if(other.tag == "PlayerHitbox")
@@ -254,23 +231,4 @@ public class DarkMonsterController : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag == "LargePlayerRange")
-        {
-            if (checkLargeRange == true)
-                if (runAway)
-                    darkMonsterBehaviorSwitch = 4;
-                else
-                    darkMonsterBehaviorSwitch = 1;
-        }
-
-        if (other.tag == "PlayerRange")
-        {
-            if (runAway)
-                darkMonsterBehaviorSwitch = 4;
-            else
-            darkMonsterBehaviorSwitch = 1;
-        }
-    }
 }

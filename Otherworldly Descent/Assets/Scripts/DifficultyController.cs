@@ -14,7 +14,7 @@ public class DifficultyController : MonoBehaviour
 
     public LightMonster lightMonsterController;
 
-    ScoreController scoreController;
+    public ScoreController scoreController;
 
     public GameController gameController;
 
@@ -49,7 +49,6 @@ public class DifficultyController : MonoBehaviour
     //Flash effectivness
     private float flashEffectivnessSwitch;
     public TextMeshProUGUI flashEffectivnessText;
-
 
 
 
@@ -111,16 +110,25 @@ public class DifficultyController : MonoBehaviour
             case 1:
                 lightMonsterController.phaseMultiplyer = 0.5f;
                 phaseDurationText.text = "Phases will last half as long";
+                scoreController.phaseLengthBonusBool = true;
+                scoreController.phaseLengthBonus = 0.8f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 2:
                 lightMonsterController.phaseMultiplyer = 1;
                 phaseDurationText.text = "Phases will last the normal amount";
+                scoreController.phaseLengthBonusBool = false;
+                scoreController.phaseLengthBonus = 1f;
+                scoreController.firstTextCalc--;
                 break;
 
             case 3:
                 lightMonsterController.phaseMultiplyer = 2;
                 phaseDurationText.text = "Phases will last twice as long";
+                scoreController.phaseLengthBonusBool = true;
+                scoreController.phaseLengthBonus = 1.2f;
+                scoreController.firstTextCalc++;
                 break;
         }
     }
@@ -131,6 +139,18 @@ public class DifficultyController : MonoBehaviour
     {
 
             gameController.playerMustExit = !gameController.playerMustExit;
+            scoreController.returnToExitBonusBool = !scoreController.returnToExitBonusBool;
+        if (exit)
+        {
+            scoreController.returnToExitBonus = 5000;
+            scoreController.firstTextCalc++;
+        }
+        else
+        {
+            scoreController.returnToExitBonus = 0;
+            scoreController.firstTextCalc--;
+        }
+
 
     }
 
@@ -140,7 +160,17 @@ public class DifficultyController : MonoBehaviour
 
     {
             runeSpawner.randomSpawnBool = !runeSpawner.randomSpawnBool;
-
+            scoreController.randomRunesBonusBool = !scoreController.randomRunesBonusBool;
+        if (randomSpawns)
+        {
+            scoreController.randomRunesBonus = 7500;
+            scoreController.firstTextCalc++;
+        }
+        else
+        {
+            scoreController.randomRunesBonus = 0;
+            scoreController.firstTextCalc--;
+        }
     }
 
 
@@ -156,10 +186,19 @@ public class DifficultyController : MonoBehaviour
 
     public void DoubleDamage(bool doubleDamage)
     {
-
+        scoreController.doubleDamageBool = !scoreController.doubleDamageBool;
         darkMonsterController.doubleDamage = !darkMonsterController.doubleDamage;
         lightMonsterController.doubleDamage = !lightMonsterController.doubleDamage;
-
+        if (doubleDamage)
+        {
+            scoreController.doubleDamageBonus = 1.75f;
+            scoreController.firstTextCalc++;
+        }
+        else
+        {
+            scoreController.doubleDamageBonus = 1;
+            scoreController.firstTextCalc--;
+        }
 
     }
 
@@ -171,26 +210,39 @@ public class DifficultyController : MonoBehaviour
             case 1:
                 playerScript.flashDelayMultiplyer = 0.25f;
                 flashDelayText.text = "The flash delay will be a quater as long";
+                scoreController.flashDelayBonusBool = true;
+                scoreController.flashDelayBonus = 0.5f;
                 break;
 
             case 2:
                 playerScript.flashDelayMultiplyer = 0.5f;
                 flashDelayText.text = "The flash delay will be half as long";
+                scoreController.flashDelayBonusBool = true;
+                scoreController.flashDelayBonus = 0.75f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 3:
                 playerScript.flashDelayMultiplyer = 1;
                 flashDelayText.text = "The flash delay will be it's regular time";
+                scoreController.flashDelayBonusBool = false;
+                scoreController.flashDelayBonus = 1f;
+                scoreController.firstTextCalc--;
                 break;
 
             case 4:
                 playerScript.flashDelayMultiplyer = 2;
                 flashDelayText.text = "The flash delay will be twice as long";
+                scoreController.flashDelayBonusBool = true;
+                scoreController.flashDelayBonus = 1.25f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 5:
                 playerScript.flashDelayMultiplyer = 3;
                 flashDelayText.text = "The flash delay will be thrice as long";
+                scoreController.flashDelayBonusBool = true;
+                scoreController.flashDelayBonus = 1.5f;
                 break;
         }
     }
@@ -199,7 +251,16 @@ public class DifficultyController : MonoBehaviour
     {
         
             playerScript.healthRegen = !playerScript.healthRegen;
-        healthRegenSlider.interactable = !healthRegenSlider.interactable;
+            healthRegenSlider.interactable = !healthRegenSlider.interactable;
+            scoreController.regenHealthBonusBool = !scoreController.regenHealthBonusBool;
+            if(regen)
+        {
+            scoreController.firstTextCalc++;
+        }
+        else
+        {
+            scoreController.firstTextCalc--;
+        }
 
     }
 
@@ -212,58 +273,83 @@ public class DifficultyController : MonoBehaviour
             case 1:
                 playerScript.healthRegenDelay = 15;
                 regenDelayText.text = "The player will regenerate 1 health every 15 seconds";
+                scoreController.regenHealthBonus = 0.3f;
                 break;
 
             case 2:
                 playerScript.healthRegenDelay = 30;
                 regenDelayText.text = "The player will regenerate 1 health every 30 seconds";
+                scoreController.regenHealthBonus = 0.4f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 3:
                 playerScript.healthRegenDelay = 45;
                 regenDelayText.text = "The player will regenerate 1 health every 45 seconds";
+                scoreController.regenHealthBonus = 0.5f;
+                scoreController.firstTextCalc--;
                 break;
 
             case 4:
                 playerScript.healthRegenDelay = 60;
                 regenDelayText.text = "The player will regenerate 1 health every minute";
+                scoreController.regenHealthBonus = 0.7f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 5:
                 playerScript.healthRegenDelay = 120;
                 regenDelayText.text = "The player will regenerate 1 health every 2 minutes";
+                scoreController.regenHealthBonus = 0.85f;
                 break;
         }
     }
 
     public void FlashEffectivness(float newEffect)
     {
+        
         flashEffectivnessSwitch = (int)newEffect;
         switch (flashEffectivnessSwitch)
         {
             case 1:
                 darkMonsterController.flashMultiplyer = 0.25f;
                 flashEffectivnessText.text = "The camera flash will be a quater as effective";
+                scoreController.flashEffecBonusBool = true;
+                scoreController.flashEffecBonus = 0.7f;
+
+                    
                 break;
 
             case 2:
                 darkMonsterController.flashMultiplyer = 0.5f;
                 flashEffectivnessText.text = "The camera flash will be half as effective";
+                scoreController.flashEffecBonusBool = true;
+                scoreController.flashEffecBonus = 0.85f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 3:
                 darkMonsterController.flashMultiplyer = 1;
                 flashEffectivnessText.text = "The camera flash will have its regular effectivness";
+                scoreController.flashEffecBonusBool = false;
+                scoreController.flashEffecBonus = 1f;
+                scoreController.firstTextCalc--;
                 break;
 
             case 4:
                 darkMonsterController.flashMultiplyer = 2;
                 flashEffectivnessText.text = "The camera flash will be twice as effective";
+                scoreController.flashEffecBonusBool = true;
+                scoreController.flashEffecBonus = 1.25f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 5:
                 darkMonsterController.flashMultiplyer = 3;
                 flashEffectivnessText.text = "The camera flash will be thrice as effective";
+                scoreController.flashEffecBonusBool = true;
+                scoreController.flashEffecBonus = 1.5f;
+
                 break;
         }
     }
@@ -278,16 +364,25 @@ public class DifficultyController : MonoBehaviour
             case 1:
                 darkMonsterController.speed = 3;
                 monsterSpeedText.text = "The Dark Monster will move at half its speed";
+                scoreController.monsterSpeedBonusBool = true;
+                scoreController.monsterSpeedBonus = 0.75f;
+                scoreController.firstTextCalc++;
                 break;
 
             case 2:
                 darkMonsterController.speed = 6;
                 monsterSpeedText.text = "The Dark Monster will move at its normal speed";
+                scoreController.monsterSpeedBonusBool = false;
+                scoreController.monsterSpeedBonus = 1f;
+                scoreController.firstTextCalc--;
                 break;
 
             case 3:
                 darkMonsterController.speed = 9;
                 monsterSpeedText.text = "The Dark Monster will move at double its speed";
+                scoreController.monsterSpeedBonusBool = true;
+                scoreController.monsterSpeedBonus = 1.25f;
+                scoreController.firstTextCalc++;
                 break;
         }
         
@@ -295,13 +390,24 @@ public class DifficultyController : MonoBehaviour
 
     public void NumberOfHearts(float newHealth)
     {
+
         playerScript.numberOfHearts = (int)newHealth;
-        playerScript.health = (int)newHealth - 1;
         int health = (int)newHealth - 1;
+        playerScript.health = health;
+        gameController.startHealth = health;
+        scoreController.totalHealth = health;
+        
         if (newHealth == 2)
-            numberOfHeartsText.text =  "You will have " + health.ToString() + " heart";
+        {
+            numberOfHeartsText.text = "You will have " + health.ToString() + " heart";
+            scoreController.healthAmountBonus = 4;
+        }
         else
-            numberOfHeartsText.text =  "You will have " + health.ToString() + " hearts";
+        {
+            numberOfHeartsText.text = "You will have " + health.ToString() + " hearts";
+            float healthBonus = 1 / health + 1;
+            scoreController.healthAmountBonus = (int)healthBonus;
+        }
     }
 
 

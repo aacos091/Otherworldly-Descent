@@ -6,10 +6,29 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    //Object spawning
+    public OrbSpawner orbSpawner;
+    public RuneSpawner runeSpawner;
+    public bool canSpawnObjects = true;
 
+    //Player information
+    public PlayerMove playerScript;
+    public PlayerLook cameraScript;
+    public int startHealth = 5;
+    public GameObject playerHealthUI;
+
+    //Pause menu stuff
+    public GameObject pauseMenu;
+    private bool notPaused = true;
 
     //Victory stuff
     public bool playerMustExit;
+
+    //Other scripts
+    public ScoreController scoreController;
+
+    
+
 
 
     //Spawn point stuff
@@ -26,14 +45,11 @@ public class GameController : MonoBehaviour
     private bool playerLost;
 
     //Spawn stuff
-    public bool canSpawn;
-    private bool startSpawn;
-    public int behaviorChance;
-    public int behaviorChanceMax;
-    public int behaviorChanceMin;
-    private int behaviorChanceAddition;
-    private Transform currentPoint;
-    private int randomSpawnPoint;
+    public bool canSpawnDM;
+    private bool startDMSpawn;
+    private Transform currentDMPoint;
+    private int randomDMSpawnPoint;
+    private GameObject spawnedDarkMonster;
     
 
     //Spawn times
@@ -46,8 +62,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
        
-        startSpawn = true;
-        //StartCoroutine(StartSpawn());
+
     }
 
     // Update is called once per frame
@@ -56,9 +71,11 @@ public class GameController : MonoBehaviour
 
         if (Input.GetKeyDown("escape") && canPause)
         {
-
-                Application.Quit();
-            
+            if(notPaused)
+                Pause();
+            //Application.Quit();
+            else
+                Resume();
         }
 
         
@@ -67,26 +84,73 @@ public class GameController : MonoBehaviour
             //GameObject.Find("PauseMenuCanvas").GetComponent<pausemenu>().Pause();
         }
 
-        if(canSpawn)
+        if(canSpawnDM)
         {
-            //StartCoroutine(Spawn());
+            StartCoroutine(Spawn());
         }
 
     }
 
+    public void Pause()
+    {
+        notPaused = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        pauseMenu.SetActive(true);
+    }
+
+    public void Resume()
+    {
+        notPaused = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        pauseMenu.SetActive(false);
+    }
+
+
+    public void ResetGame()
+    {
+        cameraScript.GetComponent<PlayerLook>().enabled = true;
+        playerScript.GetComponent<PlayerMove>().enabled = true;
+        scoreController.Restart();
+        Destroy(spawnedDarkMonster);
+        StartGame();
+        SpawnObjects();
+        scoreController.runesCollected = 0;
+        scoreController.orbsCollected = 0;
+    }
+
+
+    public void StartGame()
+    {
+
+        playerHealthUI.SetActive(true);
+        playerScript.health = startHealth;
+        distance = 0;
+        playerLost = false;
+        startDMSpawn = true;
+        StartCoroutine(StartSpawn());
+        canSpawnDM = false;
+    }
+
+    private void SpawnObjects()
+    {
+        orbSpawner.DeleteOrbs();
+        runeSpawner.DeleteRunes();
+    }
 
     public void FindSpawnPoint()
     {
 
-        randomSpawnPoint = Random.Range(0, spawnPoints.Length);
-        currentPoint = spawnPoints[randomSpawnPoint];
-        distance = Vector3.Distance(playerPosition.position, currentPoint.position);
+        randomDMSpawnPoint = Random.Range(0, spawnPoints.Length);
+        currentDMPoint = spawnPoints[randomDMSpawnPoint];
+        distance = Vector3.Distance(playerPosition.position, currentDMPoint.position);
         
         if (distance > 30)
         {
-            currentPoint = spawnPoints[randomSpawnPoint];
-            GameObject newObj = Instantiate(darkMonster, spawnPoints[randomSpawnPoint].position, Quaternion.identity) as GameObject;
-            darkMonsterController = newObj.GetComponent<DarkMonsterController>();
+            currentDMPoint = spawnPoints[randomDMSpawnPoint];
+            spawnedDarkMonster = Instantiate(darkMonster, spawnPoints[randomDMSpawnPoint].position, Quaternion.identity) as GameObject;
+            darkMonsterController = spawnedDarkMonster.GetComponent<DarkMonsterController>();
         }
         else
         {
@@ -97,11 +161,11 @@ public class GameController : MonoBehaviour
 
     public IEnumerator StartSpawn()
     {
-        if(startSpawn)
+        if(startDMSpawn)
         {
             yield return new WaitForSeconds(monsterSpawnTimeStart);
             FindSpawnPoint();
-            startSpawn = false;
+            startDMSpawn = false;
             yield return new WaitForSeconds(1);
             darkMonsterController.behavior = darkMonsterController.AttackPlayer;
             darkMonsterController.checkLargeRange = true;
@@ -112,46 +176,15 @@ public class GameController : MonoBehaviour
 
     private IEnumerator Spawn()
     {
-        if(canSpawn)
+        if(canSpawnDM)
         {
-            canSpawn = false;
-            behaviorChance = (Random.Range(behaviorChanceMin, behaviorChanceMax) + behaviorChanceAddition);
+            canSpawnDM = false;
 
             spawnDelay = Random.Range(monsterSpawnTimeMinimum, monsterSpawnTimeMaximum);
             yield return new WaitForSeconds(spawnDelay);
             FindSpawnPoint();
             yield return new WaitForSeconds(1);
-
-
-            if (behaviorChance < 1)
-            {
-                darkMonsterController.behavior = darkMonsterController.FollowAtDistance;
-                darkMonsterController.checkLargeRange = true;
-                behaviorChanceAddition += 10;
-            }
-            else if (behaviorChance < 2)
-            {
-                darkMonsterController.behavior = darkMonsterController.FollowThenAttack;
-                darkMonsterController.checkLargeRange = true;
-                behaviorChanceAddition += (Random.Range(5, 10));
-            }
-            else if (behaviorChance < 60)
-            {
-                darkMonsterController.behavior = darkMonsterController.AttackPlayer;
-                behaviorChanceAddition += (Random.Range(5, 10));
-            }
-            else if (behaviorChance < 80)
-            {
-                darkMonsterController.behavior = darkMonsterController.FastAttack;
-                behaviorChanceAddition = 20;
-                darkMonsterController.agent.speed = 9;
-            }
-            else
-            {
-                darkMonsterController.behavior = darkMonsterController.AttackTwice;
-                behaviorChanceAddition = 5;
-            }
-
+            darkMonsterController.behavior = darkMonsterController.AttackPlayer;
             yield return null;
         }
 
@@ -168,10 +201,25 @@ public class GameController : MonoBehaviour
 
    public void PlayerLoses()
     {
+        StartCoroutine(scoreController.TallyScore());
         playerLost = true;
-        GameObject playerLook = GameObject.Find("Camera");
-        Destroy(playerLook.GetComponent<PlayerLook>());
-        GameObject playerMove = GameObject.Find("Player");
-        Destroy(playerMove.GetComponent<PlayerMove>());
+        cameraScript.GetComponent<PlayerLook>().enabled = false;
+        playerScript.GetComponent<PlayerMove>().enabled = false;
+        
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {   if (canSpawnObjects)
+            {
+                SpawnObjects();
+                canSpawnObjects = false;
+            }
+        }
+
+    }
+
+
+
 }

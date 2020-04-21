@@ -30,9 +30,7 @@ public class PlayerMove : MonoBehaviour
 
     //Player progress stuff
     private Vector3 previousPlayerPosition;
-
     private float progression2;
-
     private bool playerMovement2;
 
 
@@ -43,14 +41,14 @@ public class PlayerMove : MonoBehaviour
     public Light cameraLightSource;
     public AudioSource flashSound;
     public float flashDelayMultiplyer;
+    public GameObject flashArea;
 
-    //Monster lin of sight stuff for despawning
-    public bool canSeeMonster;
-    public bool checkMonsterLOS;
-    private Transform location;
+    //Win/Lose stuff
+    public GameController gameController;
+
 
     //Health regen
-    public float healthRegenDelay;
+    public float healthRegenDelay = 120;
     public bool healthRegen;
 
     private void Awake()
@@ -58,7 +56,6 @@ public class PlayerMove : MonoBehaviour
      
         charController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
-        location = GetComponent<Transform>();
         flashSound = GetComponent<AudioSource>();
 
     }
@@ -66,7 +63,10 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if(healthRegen)
+        {
+            StartCoroutine(RegenerateHealth());
+        }
 
 
         if ((Input.GetMouseButtonDown(0)) && canFlash)
@@ -101,29 +101,27 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
-        if(checkMonsterLOS)
+        if (health <= 0)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(location.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
-            {
-                if (hit.collider.gameObject.tag == "Enemy")
-                {
-                    canSeeMonster = true;
-                }
-            }
+            gameController.PlayerLoses();
         }
+
+
 
         PlayerMovement();
 
     }
 
 
-    public IEnumerator regenerateHealth()
+    public IEnumerator RegenerateHealth()
     {
         yield return new WaitForSeconds(healthRegenDelay);
-        if(health < numberOfHearts - 1)
+        if (healthRegen)
         {
-            health++;
+            if (health < numberOfHearts - 1)
+            {
+                health++;
+            }
         }
     }
         
@@ -199,7 +197,7 @@ public class PlayerMove : MonoBehaviour
 
     private IEnumerator CameraFlash()
     {
-        transform.GetChild(2).gameObject.SetActive(true);
+        flashArea.SetActive(true);
         for (float i = 0; i <= 5; i += (Time.deltaTime * 50))
         {
             // set color with i as alpha
@@ -208,7 +206,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         yield return new WaitForSeconds(cameraFlashTime);
-        transform.GetChild(2).gameObject.SetActive(false);
+        flashArea.SetActive(false);
         for (float i = 5; i >= 0; i -= (Time.deltaTime * 100))
         {
             // set color with i as alpha

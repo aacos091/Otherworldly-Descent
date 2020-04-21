@@ -13,27 +13,66 @@ public class ScoreController : MonoBehaviour
     public int randomMaxInt;
 
     //Total health scoring
-    public TextMeshProUGUI totalHealthText;
-    public TextMeshProUGUI healthScoreText;
     public int totalHealth;
     private int healthScore;
 
     //Orb scoring
-    public TextMeshProUGUI orbsCollectedText;
-    public TextMeshProUGUI orbScoreText;
+
     public int orbsCollected;
     private int orbScore;
 
     //Rune scoring
-    public TextMeshProUGUI runesCollectedText;
-    public TextMeshProUGUI runeScoreText;
+
     public int runesCollected;
     private int runeScore;
+
+    //Bonus scores
+    public TextMeshProUGUI[] bonusTextsLeft;
+    public TextMeshProUGUI[] bonusTextsRight;
+    private int currentBonusText;
+
+    //Other stuff
+    private float tallySpeed = 0.5f;
+    private bool tallySpeedUpBool;
+    public int firstTextCalc;
+    public int firstText = 4;
+
+    //Monster bonuses
+    public bool doubleDamageBool;
+    public float doubleDamageBonus; //Multiplyer
+    public bool monsterSpeedBonusBool;
+    public float monsterSpeedBonus; //Multiplyer
+    public bool phaseLengthBonusBool;
+    public float phaseLengthBonus;  //Bonus
+
+    //Player Bonuses
+
+    public bool regenHealthBool; //Multiplyer
+
+    public bool regenHealthBonusBool;
+    public float regenHealthBonus; //Multiplyer
+    public bool healthAmountBonusBool;
+    public int healthAmountBonus; //Multiplyer
+    public bool flashEffecBonusBool;
+    public float flashEffecBonus;   //Bonus
+    public bool flashDelayBonusBool;
+    public float flashDelayBonus;  //Bonus
+
+    //Level bonuses
+    public float returnToExitBonus;
+    public bool returnToExitBonusBool; //Bonus
+    public float randomRunesBonus; //Bonus
+    public bool randomRunesBonusBool;
+
+
+
 
     //Total score
     public TextMeshProUGUI scoreTallyText;
     public TextMeshProUGUI totalScoreText;
-    public int totalScore;
+    private float totalScoreFloat;
+    public float totalScoreInt;
+    public float multiplyer;
 
 
 
@@ -50,133 +89,275 @@ public class ScoreController : MonoBehaviour
     {
         if ((Input.GetMouseButtonDown(1)))
         {
-
-
             StartCoroutine(TallyScore());
 
         }
 
+        if ((Input.GetMouseButtonDown(0)))
+        {
+            tallySpeed = 0.03f;
+            tallySpeedUpBool = true;
+        }
+
+        if (firstTextCalc == 0)
+            firstText = 4;
+
+        if (firstTextCalc == 2)
+            firstText = 3;
+
+        else if (firstTextCalc == 4)
+            firstText = 2;
+
+        else if (firstTextCalc == 6)
+            firstText = 1;
+
+        else if (firstTextCalc == 8)
+            firstText = 0;
+        
 
 
     }
 
+    public void Restart()
+    {
+        tallySpeed = 0.5f;
+        tallySpeedUpBool = false;
+        totalScoreText.text = "";
+        foreach (TextMeshProUGUI bonusText in bonusTextsLeft)
+        {
+            bonusText.text = "";
+
+        }
+        foreach (TextMeshProUGUI bonusText in bonusTextsRight)
+        {
+            bonusText.text = "";
+
+        }
+    }
+
+
 
     public IEnumerator TallyScore()
     {
-
+        tallySpeed = 0.5f;
+        tallySpeedUpBool = false;
+        currentBonusText = firstText;
         if (orbsCollected > 0)
         {
-            for (int i = 0; i <= orbsCollected; i += (1))
+            for (int i = 0; i <= orbsCollected; i++)
             {
-                orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: </font>" + i.ToString();
+                bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\"> Orbs Collected: </font>" + i.ToString();
                 yield return null;
             }
 
-            orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(tallySpeed);
             orbScore = orbsCollected * 50;
             randomMinFloat = orbScore * 0.01f;
             randomMaxFloat = orbScore * 0.02f;
+            if (tallySpeedUpBool)
+            {
+                randomMinFloat = 999999;
+                randomMaxFloat = 999999;
+            }
             randomMinInt = (int)randomMinFloat;
             randomMaxInt = (int)randomMaxFloat;
 
             for (int i = 0; i <= orbScore; i += Random.Range(randomMinInt, randomMaxInt))
             {
 
-                orbScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
+                bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
                 yield return null;
             }
 
-            orbScoreText.text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
         }
         else
         {
-            orbsCollectedText.text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
-            yield return new WaitForSeconds(0.5f);
-            orbScoreText.text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\"> Orbs Collected: " + orbsCollected.ToString() + "</font>";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: " + orbScore.ToString() + "</font>";
         }
+        currentBonusText++;
+        yield return new WaitForSeconds(tallySpeed);
 
-        yield return new WaitForSeconds(0.5f);
 
-
-        for (int i = 0; i <= totalHealth; i += (1))
+        for (int i = 0; i <= totalHealth; i++)
         {
-            totalHealthText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
             yield return null;
         }
 
-        totalHealthText.text = "<font=\"LiberationSans SDF\">Health Remaining: " + totalHealth.ToString() + "</font>";
+        bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Health Remaining: " + totalHealth.ToString() + "</font>";
 
-        yield return new WaitForSeconds(0.5f);
-        healthScore = totalHealth * 100;
+        yield return new WaitForSeconds(tallySpeed);
+        healthScore = totalHealth * 300 * healthAmountBonus;
 
         randomMinFloat = healthScore * 0.01f;
         randomMaxFloat = healthScore * 0.02f;
+        if (tallySpeedUpBool)
+        {
+            randomMinFloat = 999999;
+            randomMaxFloat = 999999;
+        }
         randomMinInt = (int)randomMinFloat;
         randomMaxInt = (int)randomMaxFloat;
+
         for (int i = 0; i <= healthScore; i += Random.Range(randomMinInt, randomMaxInt))
         {
 
-            healthScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
             yield return null;
         }
 
-        healthScoreText.text = "<font=\"LiberationSans SDF\">Score: " + healthScore.ToString() + "</font>";
-
-        yield return new WaitForSeconds(0.5f);
+        bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: " + healthScore.ToString() + "</font>";
+        currentBonusText++;
+        yield return new WaitForSeconds(tallySpeed);
 
         if (runesCollected > 0)
         {
-            for (int i = 0; i <= runesCollected; i += (1))
+            for (int i = 0; i <= runesCollected; i++)
             {
-                runesCollectedText.text = "<font=\"LiberationSans SDF\">Score: </font> " + i.ToString() + "</font>";
+                bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: </font> " + i.ToString() + "</font>";
                 yield return null;
             }
 
-            runesCollectedText.text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(tallySpeed);
             runeScore = orbsCollected * 50;
             randomMinFloat = runeScore * 0.01f;
             randomMaxFloat = runeScore * 0.02f;
+            if (tallySpeedUpBool)
+            {
+                randomMinFloat = 999999;
+                randomMaxFloat = 999999;
+            }
             randomMinInt = (int)randomMinFloat;
             randomMaxInt = (int)randomMaxFloat;
 
             for (int i = 0; i <= runeScore; i += Random.Range(randomMinInt, randomMaxInt))
             {
 
-                runeScoreText.text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
+                bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: </font>" + i.ToString();
                 yield return null;
             }
-            runeScoreText.text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
         }
         else
         {
-            runesCollectedText.text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
-            yield return new WaitForSeconds(0.5f);
-            runeScoreText.text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Runes Collected: " + runesCollected.ToString() + "</font>";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">Score: " + runeScore.ToString() + "</font>";
         }
 
-
-        yield return new WaitForSeconds(0.5f);
-
-
+        currentBonusText++;
+        yield return new WaitForSeconds(tallySpeed);
 
 
 
+        if(returnToExitBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Return to exit bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + returnToExitBonus.ToString() + "</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
 
-        totalScore = (orbScore + healthScore + runeScore);
-        randomMinFloat = totalScore * 0.01f;
-        randomMaxFloat = totalScore * 0.02f;
-        randomMinInt = (int)randomMinFloat;
-        randomMaxInt = (int)randomMaxFloat;
-        for (int i = 0; i <= totalScore; i += Random.Range(randomMinInt, randomMaxInt))
+        if(randomRunesBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Random runes";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + randomRunesBonus.ToString() + "</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (phaseLengthBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Phase Length bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + phaseLengthBonus.ToString() + " Multiplyer</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (monsterSpeedBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Monster speed bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + monsterSpeedBonus.ToString() + " Multiplyer</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (regenHealthBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Regen health bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + regenHealthBonus.ToString() + " Multiplyer</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (flashEffecBonusBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Flash effectivness bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + flashEffecBonus.ToString() + " Multiplyer</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (flashDelayBonusBool)
         {
 
-            totalScoreText.text = "<font=\"LiberationSans SDF\">Total Score:\n </font>" + i.ToString();
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Flash delay bonus";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + flashDelayBonus.ToString() + "</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+        if (doubleDamageBool)
+        {
+            bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Double damage bonus</font>";
+            yield return new WaitForSeconds(tallySpeed);
+            bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" +doubleDamageBonus.ToString() + " Multiplyer</font>";
+            currentBonusText++;
+            yield return new WaitForSeconds(tallySpeed);
+        }
+
+
+
+
+        currentBonusText++;
+        multiplyer = (phaseLengthBonus * monsterSpeedBonus * regenHealthBonus * flashEffecBonus * flashDelayBonus * doubleDamageBonus);
+        totalScoreFloat = ((orbScore + healthScore + runeScore + returnToExitBonus + randomRunesBonus) * multiplyer);
+        totalScoreInt = (int)totalScoreFloat;
+
+        randomMinFloat = totalScoreInt * 0.01f;
+        randomMaxFloat = totalScoreInt * 0.02f;
+        if (tallySpeedUpBool)
+        {
+            randomMinFloat = 999999;
+            randomMaxFloat = 999999;
+        }
+        randomMinInt = (int)randomMinFloat;
+        randomMaxInt = (int)randomMaxFloat;
+        bonusTextsLeft[currentBonusText].text = "<font=\"LiberationSans SDF\">Total Score: </font>";
+        for (int i = 0; i <= totalScoreInt; i += Random.Range(randomMinInt, randomMaxInt))
+        {
+
+            bonusTextsRight[currentBonusText].text = i.ToString();
             yield return null;
         }
-        totalScoreText.text = "<font=\"LiberationSans SDF\">Total Score:\n" + totalScore.ToString() + "</font>";
+
+        bonusTextsRight[currentBonusText].text = "<font=\"LiberationSans SDF\">" + totalScoreInt.ToString() + "</font>";
+
+        tallySpeed = 0.5f;
+        tallySpeedUpBool = false;
     }
 }

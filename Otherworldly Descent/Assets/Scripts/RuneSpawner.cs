@@ -11,7 +11,7 @@ public class RuneSpawner : MonoBehaviour
 
 
     public int currentRune = 1;
-    public float runeAmount;
+    public float runeAmount = 1;
     public int randomSpawnInt;
     public int spawn;
     private int randomSpawnMin = 1;
@@ -46,6 +46,7 @@ public class RuneSpawner : MonoBehaviour
         spawn = 0;
         randomSpawnMin = 0;
         randomSpawnMax = 3;
+        SpawnRunes();
     }
 
     public void SpawnRunes()

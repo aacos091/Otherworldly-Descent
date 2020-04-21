@@ -69,9 +69,9 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = (Random.Range(lowTime, highTime) * phaseMultiplyer);
-            yield return new WaitForSecondsRealtime(lightPeriod);
+            yield return new WaitForSeconds(lightPeriod);
 
-            playerScript.checkMonsterLOS = true;
+
             //darkMonsterController.RunAwayFunction();
             lightSource.range = highLRange;
             //Increases intenisty over time. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
@@ -84,7 +84,7 @@ public class LightMonster : MonoBehaviour
 
             //sets a random amount of time the light will stay in this intensity
             lightPeriod = Random.Range(lowTime, highTime);
-            yield return new WaitForSecondsRealtime(lightPeriod);
+            yield return new WaitForSeconds(lightPeriod);
 
                         lightSource.range = lowLRange;
             //Decreases intensity overtime. Multiply "Time.deltaTime" by a number to speed it up, or divide by a number to slow it down.
@@ -110,7 +110,7 @@ public class LightMonster : MonoBehaviour
                 playerScript.health-- ;
             }
             damaged = false;
-            yield return new WaitForSecondsRealtime(waitAfterDamage);
+            yield return new WaitForSeconds(waitAfterDamage);
             damaged = true;
         }
     }
