@@ -27,14 +27,17 @@ public class GameController : MonoBehaviour
     //Other scripts
     public ScoreController scoreController;
 
-    
-
+    //Start game stuff
+    public GameObject entranceBlock;
+    public Light mainLight;
+    public GameObject islandCollider;
+    public GameObject templeStartPoint;
 
 
     //Spawn point stuff
     public Transform[] spawnPoints;
 
-    public Transform playerPosition;
+    public GameObject playerPosition;
     private float distance;
 
     public GameObject darkMonster;
@@ -71,11 +74,17 @@ public class GameController : MonoBehaviour
 
         if (Input.GetKeyDown("escape") && canPause)
         {
-            if(notPaused)
+            if (notPaused)
+            {
                 Pause();
+                playerScript.canFlash = false;
+            }
             //Application.Quit();
             else
+            {
                 Resume();
+                playerScript.canFlash = true;
+            }
         }
 
         
@@ -107,17 +116,43 @@ public class GameController : MonoBehaviour
         pauseMenu.SetActive(false);
     }
 
+    public void DimMainLight()
+    {
+        entranceBlock.SetActive(true);
+        StartCoroutine(DimLight());
+        islandCollider.GetComponent<MeshCollider>().enabled = false;
+        StartGame();
+    }
+
+    private IEnumerator DimLight()
+    {
+        for (float i = 1; i > 0; i -= ((Time.deltaTime * 0.5f)))
+        {
+
+            mainLight.intensity = i;
+            yield return null;
+        }
+    }
 
     public void ResetGame()
     {
+        SpawnObjects();
+        CharacterController cc = playerPosition.GetComponent<CharacterController>();
+
+        cc.enabled = false;
+
+
+        playerPosition.transform.position = templeStartPoint.transform.position;
+        playerPosition.transform.rotation = templeStartPoint.transform.rotation;
+        cc.enabled = true;
         cameraScript.GetComponent<PlayerLook>().enabled = true;
         playerScript.GetComponent<PlayerMove>().enabled = true;
         scoreController.Restart();
-        Destroy(spawnedDarkMonster);
+        
         StartGame();
-        SpawnObjects();
-        scoreController.runesCollected = 0;
-        scoreController.orbsCollected = 0;
+        Destroy(spawnedDarkMonster);
+
+
     }
 
 
@@ -133,7 +168,7 @@ public class GameController : MonoBehaviour
         canSpawnDM = false;
     }
 
-    private void SpawnObjects()
+    public void SpawnObjects()
     {
         orbSpawner.DeleteOrbs();
         runeSpawner.DeleteRunes();
@@ -144,7 +179,7 @@ public class GameController : MonoBehaviour
 
         randomDMSpawnPoint = Random.Range(0, spawnPoints.Length);
         currentDMPoint = spawnPoints[randomDMSpawnPoint];
-        distance = Vector3.Distance(playerPosition.position, currentDMPoint.position);
+        distance = Vector3.Distance(playerPosition.transform.position, currentDMPoint.position);
         
         if (distance > 30)
         {
@@ -210,13 +245,6 @@ public class GameController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
-        {   if (canSpawnObjects)
-            {
-                SpawnObjects();
-                canSpawnObjects = false;
-            }
-        }
 
     }
 

@@ -11,11 +11,11 @@ public class OrbController : MonoBehaviour
     public float orbRespawnTime;
     public GameObject orbYellow;
     public GameObject orbRed;
-    private ScoreController gameController;
+    private ScoreController scoreController;
     // Start is called before the first frame update
     void Start()
     {
-     gameController = GameObject.Find("ScoreController").GetComponent<ScoreController>();
+     scoreController = GameObject.Find("ScoreController").GetComponent<ScoreController>();
 
 
     }
@@ -41,7 +41,7 @@ public class OrbController : MonoBehaviour
         {
             if(uniqueOrb)
             {
-                gameController.orbsCollected++;
+                scoreController.orbsCollected++;
                 uniqueOrb = false;
             }
             Destroy(orbYellow);

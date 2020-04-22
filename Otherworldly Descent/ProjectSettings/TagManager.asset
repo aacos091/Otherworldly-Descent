@@ -15,6 +15,7 @@ TagManager:
   - Orb
   - AudioManager
   - templeChange
+  - Space Entrance
   layers:
   - Default
   - TransparentFX

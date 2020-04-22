@@ -33,6 +33,9 @@ public class PlayerMove : MonoBehaviour
     private float progression2;
     private bool playerMovement2;
 
+    //Reseting game stuff
+    public bool spawnObjects = true;
+
 
     //Camera flash stuff
     public float cameraFlashTime;
@@ -199,18 +202,30 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        if (other.tag == "templeChange") 
+        if (other.tag == "templeChange")
         {
             if (templeChange)
             {
-                audioM.ChangeBGM();
                 templeChange = false;
+                gameController.DimMainLight();
+            }
+
+        }
+
+        if (other.tag == "Space Entrance")
+        {
+            if (spawnObjects)
+            {
+                audioM.ChangeBGM();
+                
+                gameController.SpawnObjects();
+                spawnObjects = false;
             }
 
         }
     }
 
-    private IEnumerator CameraFlash()
+        private IEnumerator CameraFlash()
     {
         flashArea.SetActive(true);
         for (float i = 0; i <= 5; i += (Time.deltaTime * 50))
