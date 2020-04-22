@@ -152,7 +152,7 @@ public class GameController : MonoBehaviour
         StartGame();
         Destroy(spawnedDarkMonster);
 
-
+        islandCollider.GetComponent<MeshCollider>().enabled = false;
     }
 
 
