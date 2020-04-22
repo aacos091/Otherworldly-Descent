@@ -51,19 +51,29 @@ public class PlayerMove : MonoBehaviour
     public float healthRegenDelay = 120;
     public bool healthRegen;
 
+    // Misc. Audio Stuff
+    public bool isWalking;
+    public bool isRunning;
+    public AudioSource footstepsSound;
+    public AudioClip walking;
+    public AudioClip running;
+    public AudioManager audioM;
+
     private void Awake()
     {
      
         charController = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
-        flashSound = GetComponent<AudioSource>();
-
+        AudioSource[] audios = GetComponents<AudioSource>();
+        flashSound = audios[0];
+        footstepsSound = audios[1];
+        audioM = FindObjectOfType<AudioManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(healthRegen)
+        if (healthRegen)
         {
             StartCoroutine(RegenerateHealth());
         }
@@ -81,7 +91,7 @@ public class PlayerMove : MonoBehaviour
 
         for (int i = 0; i < hearts.Length; i++)
         {
-            if(i > health)
+            if (i > health)
             {
                 hearts[i].sprite = fullHeart;
             }
@@ -91,7 +101,7 @@ public class PlayerMove : MonoBehaviour
             }
 
 
-            if(i < numberOfHearts)
+            if (i < numberOfHearts)
             {
                 hearts[i].enabled = true;
             }
@@ -107,11 +117,10 @@ public class PlayerMove : MonoBehaviour
         }
 
 
-
+        PlayFootsteps();
         PlayerMovement();
 
     }
-
 
     public IEnumerator RegenerateHealth()
     {
@@ -124,11 +133,6 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
-        
-
-
-
-
 
     private void PlayerMovement()
     {
@@ -151,7 +155,7 @@ public class PlayerMove : MonoBehaviour
 
         charController.SimpleMove(forwardMovement + rightMovement);
 
-        JumpInput();
+        //JumpInput();
     }
 
     private void JumpInput()
@@ -193,6 +197,11 @@ public class PlayerMove : MonoBehaviour
             }
 
         }
+
+        if (other.tag == "templeChange") 
+        {
+            audioM.ChangeBGM();
+        }
     }
 
     private IEnumerator CameraFlash()
@@ -215,6 +224,61 @@ public class PlayerMove : MonoBehaviour
         }
         yield return new WaitForSeconds(flashDelay * flashDelayMultiplyer);
         canFlash = true;
+    }
+
+    public void PlayFootsteps()
+    {
+        if (Input.GetAxis("Horizontal") != 0f || Input.GetAxis("Vertical") != 0f)
+        {
+            if (Input.GetKey("left shift"))
+            {
+                // Running
+                isWalking = false;
+                isRunning = true;
+            }
+            else
+            {
+                // Walking
+                isWalking = true;
+                isRunning = false;
+            }
+        }
+        else
+        {
+            // Stopped
+            isWalking = false;
+            isRunning = false;
+        }
+
+        // Play Audio
+        if (isWalking)
+        {
+            if (footstepsSound.clip != walking)
+            {
+                footstepsSound.enabled = false;
+                footstepsSound.clip = walking;
+            }
+            footstepsSound.enabled = true;
+            footstepsSound.loop = true;
+            Debug.Log("Walking");
+        }
+        else if (isRunning)
+        {
+            if (footstepsSound.clip != running)
+            {
+                footstepsSound.enabled = false;
+                footstepsSound.clip = running;
+            }
+            footstepsSound.enabled = true;
+            footstepsSound.loop = true;
+            Debug.Log("Running");
+        }
+        else
+        {
+            footstepsSound.enabled = false;
+            footstepsSound.loop = false;
+            Debug.Log("Stopped");
+        }
     }
 }
 

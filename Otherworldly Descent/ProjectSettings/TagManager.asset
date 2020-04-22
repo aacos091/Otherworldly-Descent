@@ -13,6 +13,8 @@ TagManager:
   - PlayerHitbox
   - Rune
   - Orb
+  - AudioManager
+  - templeChange
   layers:
   - Default
   - TransparentFX
