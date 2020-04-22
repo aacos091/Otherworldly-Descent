@@ -4,11 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/UI Assets/Title Screen.unity
-    guid: a3d3df4e47cffa446b449b014fe7b758
-  - enabled: 1
-    path: Assets/Scenes/DarkMonsterTest.unity
-    guid: 3f17ad239d4a0424fbaf5e5246453110
+  m_Scenes: []
   m_configObjects: {}
