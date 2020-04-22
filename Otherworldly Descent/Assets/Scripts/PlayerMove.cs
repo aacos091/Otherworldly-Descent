@@ -54,6 +54,7 @@ public class PlayerMove : MonoBehaviour
     // Misc. Audio Stuff
     public bool isWalking;
     public bool isRunning;
+    public bool templeChange = true;
     public AudioSource footstepsSound;
     public AudioClip walking;
     public AudioClip running;
@@ -200,7 +201,12 @@ public class PlayerMove : MonoBehaviour
 
         if (other.tag == "templeChange") 
         {
-            audioM.ChangeBGM();
+            if (templeChange)
+            {
+                audioM.ChangeBGM();
+                templeChange = false;
+            }
+
         }
     }
 
